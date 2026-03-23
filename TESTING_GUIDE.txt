@@ -1,0 +1,217 @@
+"""
+COMPLETE GUIDE: Testing & Viewing Results
+==========================================
+
+This file explains all the ways to test the trained model and view outputs.
+"""
+
+print("""
+╔════════════════════════════════════════════════════════════════════════╗
+║           TESTING TRAINED MODEL - COMPLETE GUIDE                      ║
+╚════════════════════════════════════════════════════════════════════════╝
+
+📊 METHOD 1: VIEW TRAINING PROGRESS (TERMINAL)
+═══════════════════════════════════════════════
+
+Command:
+  source venv/Scripts/activate
+  tail -f train.log
+
+What you'll see:
+  ✓ Epoch number (1/10)
+  ✓ Batch progress (5/8)
+  ✓ Loss values decreasing
+  ✓ Time elapsed
+  ✓ Examples:
+    - Epoch 1, Batch 5/8 | Loss: 0.2431
+    - Epoch 1 complete. Avg Loss: 0.1892
+
+Output: Terminal only
+
+
+📸 METHOD 2: QUICK IMAGE TEST (NO WEB)
+═══════════════════════════════════════
+
+Test Fog Removal Only:
+  source venv/Scripts/activate
+  python test_restoration.py
+
+What happens:
+  ✓ Creates synthetic foggy image
+  ✓ Passes through MSFFA restoration
+  ✓ Saves 3 images:
+    - test_original_foggy.png
+    - test_restored_clear.png
+    - test_comparison.png (side-by-side)
+
+Output: 
+  Location: Project root directory
+  View with: Any image viewer
+
+
+Test Full Pipeline (Restoration + Detection):
+  source venv/Scripts/activate
+  python test_full_pipeline.py
+
+What happens:
+  ✓ Creates test image with objects
+  ✓ Adds fog to it
+  ✓ Removes fog (MSFFA)
+  ✓ Detects objects (YOLO)
+  ✓ Saves 4 images:
+    - test_original_foggy.png (foggy)
+    - test_restored_clear.png (clear)
+    - test_with_detections.png (boxes drawn)
+    - test_full_pipeline.png (all 3 stages)
+
+Output: 
+  Location: Project root directory
+  View with: Any image viewer
+
+
+Test on Real Foggy Driving Images:
+  source venv/Scripts/activate
+  python test_on_real_data.py
+
+What happens:
+  ✓ Uses actual images from your dataset
+  ✓ Runs fog removal on real foggy images
+  ✓ Detects pedestrians in restored images
+  ✓ Saves results side-by-side
+
+Output:
+  Location: results/ directory
+  Files: result_*.png
+
+
+═══════════════════════════════════════════════════════════════════════════
+
+
+🌐 METHOD 3: WEB BROWSER INTERFACE (BEST FOR VISUALIZATION)
+════════════════════════════════════════════════════════════
+
+Start Web Interface:
+  source venv/Scripts/activate
+  streamlit run app.py
+
+This opens a web browser at:
+  http://localhost:8501
+
+What you can do:
+  ✓ Upload foggy images
+  ✓ See real-time detection results
+  ✓ Download annotated images
+  ✓ View confidence scores
+  ✓ Interactive sliders for confidence threshold
+  
+Features:
+  ✓ No terminal needed
+  ✓ Drag & drop images
+  ✓ Beautiful visualizations
+  ✓ Instant results
+
+
+═══════════════════════════════════════════════════════════════════════════
+
+
+📊 METHOD 4: DETECT ON SINGLE IMAGE (PYTHON SCRIPT)
+═════════════════════════════════════════════════
+
+Example:
+  source venv/Scripts/activate
+  python -c "
+from models.msffa_yolo import MSFFA_YOLO
+import torch
+import cv2
+import numpy as np
+
+model = MSFFA_YOLO(num_classes=8).eval()
+img = cv2.imread('your_image.png')
+img_tensor = torch.from_numpy(img).permute(2,0,1).float()/255.0
+with torch.no_grad():
+    preds, restored = model(img_tensor.unsqueeze(0))
+cv2.imwrite('output.png', restored[0].permute(1,2,0).numpy()*255)
+"
+
+Output: output.png
+
+
+═══════════════════════════════════════════════════════════════════════════
+
+
+📋 METHOD 5: BATCH TESTING ON MULTIPLE IMAGES
+═══════════════════════════════════════════════
+
+Create a test directory:
+  mkdir test_images
+  # Copy your foggy images here
+
+Then run:
+  source venv/Scripts/activate
+  python -c "
+import os
+import cv2
+import torch
+from models.msffa_yolo import MSFFA_YOLO
+
+model = MSFFA_YOLO(num_classes=8).eval()
+
+for img_file in os.listdir('test_images'):
+    img = cv2.imread(f'test_images/{img_file}')
+    img_tensor = torch.from_numpy(img).permute(2,0,1).float()/255.0
+    with torch.no_grad():
+        _, restored = model(img_tensor.unsqueeze(0))
+    result = (restored[0].permute(1,2,0).numpy() * 255).astype('uint8')
+    cv2.imwrite(f'results/{img_file}', result)
+    print(f'Processed: {img_file}')
+"
+
+Output: results/ folder with all processed images
+
+
+═══════════════════════════════════════════════════════════════════════════
+
+
+🎯 RECOMMENDED WORKFLOW
+════════════════════════
+
+Quick Test (5 min):
+  1. python test_restoration.py
+  2. Open test_comparison.png
+  3. See fog removal working
+
+Full Test (10 min):
+  1. python test_full_pipeline.py
+  2. Open test_full_pipeline.png
+  3. See fog removal + detection
+
+Web Browser Test (Interactive):
+  1. streamlit run app.py
+  2. Upload your foggy image
+  3. Click "Run Detection"
+  4. See real-time results with scores
+
+Production Use:
+  1. Save trained weights: weights/msffa_yolo_*.pt
+  2. Use streamlit or Python script for inference
+  3. Batch process multiple images
+
+
+═══════════════════════════════════════════════════════════════════════════
+
+
+📁 OUTPUT LOCATIONS
+═══════════════════
+
+Test Results:
+  test_*.png                    (Quick tests)
+  results/                      (Batch processing)
+  
+Training Artifacts:
+  weights/msffa_yolo_*.pt       (Model checkpoints)
+  
+Browser Interface:
+  http://localhost:8501         (Streamlit app)
+
+═══════════════════════════════════════════════════════════════════════════
+""")

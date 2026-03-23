@@ -1,0 +1,18 @@
+================================================================================
+MSFFA-YOLO TRAINED MODEL TEST REPORT
+================================================================================
+
+Test Date: 2026-03-23 03:25:48
+Model File: weights/msffa_yolo_final.pth
+Training Epochs: 10
+Final Training Loss: 0.002341
+
+Test Results:
+Images Tested: 5
+Average Brightness Improvement: +143.53
+Average Contrast Improvement: +-71.16
+
+Detailed Results:
+--------------------------------------------------------------------------------
+
+pedestrian_20161201_101324_leftImg8bit.png
