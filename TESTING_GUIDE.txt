@@ -215,3 +215,9 @@ Browser Interface:
 
 ═══════════════════════════════════════════════════════════════════════════
 """)
+sessi@SASHIPAVAN MINGW64 /c/Desktop/YOLO_ANTI_FOGGYAI
+$  cd /c/Desktop/YOLO_ANTI_FOGGYAI/Foggy_Object_Detection && C:/Users/sessi/AppData/Local/Programs/Python/Python312/python.exe -m streamlit run app_streamlit.py --logger.level=warning 2>&1 | grep -E "(Local|Network|You can|Collecting|Running on)"
+  You can now view your Streamlit app in your browser.
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.0.132:8501
+
